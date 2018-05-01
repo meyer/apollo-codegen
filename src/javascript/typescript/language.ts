@@ -76,14 +76,16 @@ export default class TypescriptGenerator {
         }
       });
 
-    const inputType = this.interface(name, fields, {
+    const inputType = this.exportDeclaration(this.interface(name, fields, {
       keyInheritsNullability: true
-    });
+    }));
 
-    inputType.leadingComments = [{
-      type: 'CommentLine',
-      value: ` ${description}`
-    } as t.CommentLine]
+    if (description) {
+      inputType.leadingComments = [{
+        type: 'CommentLine',
+        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
+      } as t.CommentLine];
+    }
 
     return inputType;
   }

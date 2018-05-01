@@ -1,6 +1,6 @@
 {
-  "name": "apollo-codegen",
-  "version": "0.19.1",
+  "name": "@meyer/apollo-codegen",
+  "version": "0.19.2",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
@@ -51,6 +51,7 @@
     "graphql-config": "^2.0.1",
     "inflected": "^2.0.3",
     "node-fetch": "^1.7.3",
+    "prettier": "^1.12.1",
     "rimraf": "^2.6.2",
     "source-map-support": "^0.5.0",
     "yargs": "^10.0.3"
