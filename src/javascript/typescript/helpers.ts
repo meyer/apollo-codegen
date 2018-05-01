@@ -11,6 +11,7 @@ import {
 } from 'graphql'
 
 import * as t from '@babel/types';
+import { stripIndent } from 'common-tags';
 
 import { CompilerOptions } from '../../compiler';
 
@@ -58,4 +59,31 @@ export function createTypeFromGraphQLTypeFunction(
   }
 
   return typeFromGraphQLType;
+}
+
+export function convertStringToDocstringComment(str: string): t.CommentBlock | null {
+  // remove initial newlines and trailing whitespace
+  const trimmed = stripIndent`${str}`.replace(/(\s+$|^\n+)/g, '');
+  if (!trimmed || trimmed.trim() === '') {
+    return null;
+  }
+  const lines = trimmed.split('\n');
+  if (lines.length === 0) {
+    return null;
+  }
+
+  let commentText: string = '';
+  if (lines.length === 1) {
+    commentText = `* ${lines[0]} `;
+  } else {
+    commentText = stripIndent`
+    *
+    ${lines.map(line => ` * ${line.replace(/\s+$/, '')}`)}
+    `;
+  }
+
+  return {
+    type: 'CommentBlock',
+    value: commentText
+  } as t.CommentBlock;
 }

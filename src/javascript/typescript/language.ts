@@ -12,7 +12,7 @@ import {
   sortEnumValues
 } from '../../utilities/graphql';
 
-import { createTypeFromGraphQLTypeFunction,  } from './helpers';
+import { createTypeFromGraphQLTypeFunction, convertStringToDocstringComment,  } from './helpers';
 
 import * as t from '@babel/types';
 import { GraphQLScalarType } from 'graphql';
@@ -47,12 +47,14 @@ export default class TypescriptGenerator {
       ),
       []
     );
+
     if (description) {
-      scalarDeclaration.leadingComments = [{
-        type: 'CommentLine',
-        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-      } as t.CommentLine];
+      const leadingComment = convertStringToDocstringComment(description);
+      if (leadingComment) {
+        scalarDeclaration.leadingComments = [leadingComment];
+      }
     }
+
     return scalarDeclaration;
   }
 
@@ -74,10 +76,10 @@ export default class TypescriptGenerator {
     );
 
     if (description) {
-      typeAlias.leadingComments = [{
-        type: 'CommentLine',
-        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-      } as t.CommentLine];
+      const leadingComment = convertStringToDocstringComment(description);
+      if (leadingComment) {
+        typeAlias.leadingComments = [leadingComment];
+      }
     }
 
     return typeAlias;
@@ -101,10 +103,10 @@ export default class TypescriptGenerator {
     }));
 
     if (description) {
-      inputType.leadingComments = [{
-        type: 'CommentLine',
-        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-      } as t.CommentLine];
+      const leadingComment = convertStringToDocstringComment(description);
+      if (leadingComment) {
+        inputType.leadingComments = [leadingComment];
+      }
     }
 
     return inputType;
@@ -126,10 +128,10 @@ export default class TypescriptGenerator {
       propertySignatureType.optional = keyInheritsNullability && this.isNullableType(type);
 
       if (description) {
-        propertySignatureType.trailingComments = [{
-          type: 'CommentLine',
-          value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-        } as t.CommentLine]
+        const leadingComment = convertStringToDocstringComment(description);
+        if (leadingComment) {
+          propertySignatureType.leadingComments = [leadingComment];
+        }
       }
 
       return propertySignatureType;
