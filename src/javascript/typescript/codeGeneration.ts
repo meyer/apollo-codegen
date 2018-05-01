@@ -26,6 +26,7 @@ import {
 import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
 import TypescriptGenerator, { ObjectProperty, TypescriptCompilerOptions, } from './language';
 import Printer from './printer';
+import { GraphQLScalarType } from 'graphql';
 
 class TypescriptGeneratedFile implements BasicGeneratedFile {
   fileContents: string;
@@ -41,12 +42,18 @@ class TypescriptGeneratedFile implements BasicGeneratedFile {
 function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, context: CompilerContext) {
   generator.printer.enqueue(stripIndent`
     //==============================================================
-    // START Enums and Input Objects
-    // All enums and input objects are included in every output file
+    // START Scalars, Enums, and Input Objects
+    // All scalars, enums, and input objects are included in every output file
     // for now, but this will be changed soon.
     // TODO: Link to issue to fix this.
     //==============================================================
   `);
+
+  context.typesUsed
+    .filter(type => type instanceof GraphQLScalarType)
+    .forEach((inputObjectType) => {
+      generator.typeAliasForScalarType(inputObjectType as GraphQLScalarType);
+    });
 
   context.typesUsed
     .filter(type => (type instanceof GraphQLEnumType))
@@ -62,7 +69,7 @@ function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, context: C
 
   generator.printer.enqueue(stripIndent`
     //==============================================================
-    // END Enums and Input Objects
+    // END Scalars, Enums, and Input Objects
     //==============================================================
   `)
 }
@@ -130,6 +137,10 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
         // This file was automatically generated and should not be edited.
       `
     );
+  }
+
+  public typeAliasForScalarType(scalarType: GraphQLScalarType) {
+    this.printer.enqueue(this.scalarDeclaration(scalarType));
   }
 
   public typeAliasForEnumType(enumType: GraphQLEnumType) {

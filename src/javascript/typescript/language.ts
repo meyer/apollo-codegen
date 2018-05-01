@@ -15,6 +15,7 @@ import {
 import { createTypeFromGraphQLTypeFunction,  } from './helpers';
 
 import * as t from '@babel/types';
+import { GraphQLScalarType } from 'graphql';
 
 export type ObjectProperty = {
   name: string,
@@ -34,6 +35,25 @@ export default class TypescriptGenerator {
     this.options = compilerOptions;
 
     this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(compilerOptions);
+  }
+
+  public scalarDeclaration(scalarType: GraphQLScalarType) {
+    const { name, description } = scalarType;
+    const scalarDeclaration = t.exportNamedDeclaration(
+      t.TSTypeAliasDeclaration(
+        t.identifier(name),
+        undefined,
+        t.TSAnyKeyword()
+      ),
+      []
+    );
+    if (description) {
+      scalarDeclaration.leadingComments = [{
+        type: 'CommentLine',
+        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
+      } as t.CommentLine];
+    }
+    return scalarDeclaration;
   }
 
   public enumerationDeclaration(type: GraphQLEnumType) {
