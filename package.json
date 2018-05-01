@@ -1,6 +1,6 @@
 {
   "name": "@meyer/apollo-codegen",
-  "version": "0.19.3",
+  "version": "0.19.4",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
@@ -43,6 +43,7 @@
   "dependencies": {
     "@babel/generator": "7.0.0-beta.38",
     "@babel/types": "7.0.0-beta.38",
+    "@types/prettier": "^1.12.0",
     "change-case": "^3.0.1",
     "common-tags": "^1.5.1",
     "core-js": "^2.5.3",
@@ -85,5 +86,9 @@
         "skipBabel": true
       }
     }
+  },
+  "prettier": {
+    "printWidth": 110,
+    "singleQuote": true
   }
 }
